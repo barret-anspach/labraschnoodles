@@ -1,0 +1,29 @@
+@mixin viewportFontSize($vp, $min, $max) {
+  // vp:        4.5
+  // min:       21.21
+  // max:       45
+  // rangemin:  471.333   (100 / vp) * min
+  // rangemax:  1000      (100 / vp) * max
+
+  $rangeMin: round((100 / $vp) * $min);
+  $rangeMax: round((100 / $vp) * $max);
+
+  font-size: $min;
+  // between 471px and 999px Wide, and max 470px High { 4.5vw }
+  @media screen and (min-height: #{$rangeMin}) and (max-height: #{$rangeMax - 1}) and (max-width: #{$rangeMin - 1}) {
+    font-size: #{$vp}vh;
+  }
+  // between 471px and 999px High, and max 470px Wide ( 4.5vh }
+  @media screen and (min-width: #{$rangeMin}) and (max-width: #{$rangeMax - 1}) and (max-height: #{$rangeMin - 1}) {
+    font-size: #{$vp}vw;
+  }
+  // between 471px to 99px W and 471px to 999px H { 4.5vmax }
+  @media screen and (min-height: #{$rangeMin}) and (max-height: #{$rangeMax - 1})
+  and (min-width: #{$rangeMin}) and (max-width: #{$rangeMax - 1}) {
+    font-size: #{$vp}vmax;
+  }
+  @media screen and (min-height: $rangeMax),
+  screen and (min-width: $rangeMax) {
+    font-size: $max;
+  }
+}
