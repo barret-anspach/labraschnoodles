@@ -6,10 +6,8 @@
        @keyup.left="prevPuppy()"
        v-if="puppy">
     <div class="puppy-image"
-         :style="puppyStyle"
-         v-for="image in puppyImages"
-         :key="image.sys.id">
-      <img :src="image.fields.file.url" alt="">
+         :style="puppyStyle">
+      <img :src="puppyMainImage.fields.file.url" alt="">
       <h4 class="taken"
           v-if="puppy.taken">
         I've got a home!
@@ -53,6 +51,22 @@
         </tr>
       </table>
     </div>
+
+    <div class="puppy-other-images"
+         :style="{background: puppy.accentColorOpaque}">
+      <div class="text"
+          :style="{color: puppy.contrastColor}">
+        <h2 v-if="puppyImages.length > 0">Photos</h2>
+        <span v-else>Check back soon for more photos of {{puppy.name}}!</span>
+      </div>
+      <div class="other-image"
+           :class="{'landscape': image.fields.file.details.image.width >= image.fields.file.details.image.height}"
+           v-for="image in puppyImages"
+           :key="image.sys.id">
+        <img :src="image.fields.file.url" alt="">
+      </div>
+    </div>
+
     <div class="back-home"
          @click="close()">
       <a>Close</a>
@@ -105,8 +119,15 @@ export default {
         }
       }
     },
+    puppyMainImage () {
+      if (this.puppy) return this.puppy.images[0]
+    },
     puppyImages () {
-      if (this.puppy) return this.puppy.images
+      if (this.puppy) {
+        const _otherImages = [...this.puppy.images]
+        _otherImages.shift()
+        return _otherImages
+      }
     }
   },
   methods: {
@@ -166,8 +187,9 @@ export default {
     display: flex;
     flex-flow: column nowrap;
     outline: none;
+    padding: 2pc 1pc 0;
     @media all and (min-width: 800px) {
-      flex-flow: row nowrap;
+      flex-flow: row wrap;
       padding: 5pc;
     }
   }
@@ -176,8 +198,6 @@ export default {
     flex: 1 1 calc(50% - 3pc);
     @media all and (min-width: 800px) {
       flex: 1 1 calc(50% - 3pc);
-      position: sticky;
-      top: 0;
     }
   }
   .puppy-info {
@@ -200,10 +220,9 @@ export default {
     }
     @media all and (min-width: 800px) {
       width: calc(50% - 5pc);
-      position: absolute;
-      top: 0;
-      left: 5pc;
-      bottom: 0;
+      position: sticky;
+      top: 140px;
+      transform: translateY(-5pc);
       height: calc(100vh - 120px);
       max-height: calc(100vh - 120px);
       img {
@@ -302,8 +321,61 @@ export default {
     transform: rotate(-7deg);
     transform-origin: bottom right;
   }
+  .puppy-other-images {
+    z-index: 4;
+    width: calc(100% + 8pc);
+    padding: 2pc 7pc 6pc;
+    margin: 6pc -4pc -9pc;
+    display: grid;
+    grid-auto-rows: auto;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    justify-content: center;
+    align-items: center;
+    grid-gap: 1pc;
+    @media all and (min-width: 800px) {
+      width: calc(100% + 14pc);
+      margin: 0 -7pc -9pc;
+    }
+    .text {
+      text-align: left;
+      grid-column: 1 / -1;
+      span {
+        font-size: 1.25pc;
+        font-style: oblique;
+        justify-self: baseline;
+        padding: 0 0 1.5pc;
+      }
+      h2 {
+        margin-bottom: 2pc;
+      }
+    }
+    .other-image {
+      position: relative;
+      width: 100%;
+      height: 0;
+      align-self: stretch;
+      padding-bottom: (400% / 3);
+      &.landscape {
+        @media all and (min-width: 640px) {
+          grid-column-end: span 2;
+          padding-bottom: (200% / 3);
+        }
+      }
+      img {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: inherit;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
   .arrow-left,
   .arrow-right {
+    z-index: 5;
     cursor: pointer;
     position: fixed;
     top: 50%;
@@ -360,7 +432,7 @@ export default {
     cursor: pointer;
     position: fixed;
     top: 2.25pc;
-    right: 2pc;
+    right: 3pc;
     a {
       display: block;
       font-family: 'vinyl', sans-serif;

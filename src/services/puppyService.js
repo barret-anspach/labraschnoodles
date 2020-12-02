@@ -593,6 +593,18 @@ const puppyService = {
         window.console.log('Problem retrieving those puppies:\n', err)
         return shuffle(_staticPuppies.map(_pup => new Puppy(_pup)))
       })
+  },
+  getParents () {
+    return contentful.fetchContent({
+      content_type: 'parent',
+      include: 10
+    })
+      .then(res => {
+        return res.map(_parent => new Puppy(_parent))
+      })
+      .catch(err => {
+        window.console.log('Poodle/Retriever retrieval err:\n', err)
+      })
   }
 }
 

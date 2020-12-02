@@ -35,34 +35,24 @@
       <p>Meet our parents:</p>
     </section>
     <section class="parents">
-      <div class="puppy">
-        <div class="puppy-image-wrapper">
+      <div class="puppy"
+           v-for="parent in parents"
+           :key="parent.id">
+        <div class="puppy-image-wrapper"
+             v-if="parent.images.length">
           <div class="puppy-image">
-            <img src="" alt="">
+            <img :src="parent.images[0].fields.file.url" alt="">
           </div>
         </div>
         <div class="puppy-info">
-          <h2>Ella</h2>
-          <h3>Mother</h3>
-          <p>Standard Poodle</p>
-        </div>
-      </div>
-      <div class="puppy">
-        <div class="puppy-image-wrapper">
-          <div class="puppy-image">
-            <img src="" alt="">
-          </div>
-        </div>
-        <div class="puppy-info">
-          <h2>Strauss</h2>
-          <h3>Father</h3>
-          <p>Schnauzer / Black Labrador mix</p>
+          <h2 v-text="parent.name"></h2>
+          <h3 v-text="parent.gender === 'female' ? 'Mother' : 'Father'"></h3>
+          <p v-text="parent.breed"></p>
         </div>
       </div>
     </section>
     <section class="text">
-      <p>Not only are we cute, we've got great parents and loving hearts.</p>
-      <p>But we do need homes.</p>
+      <p>Get in touch if you're interested in one of the puppies up there!</p>
     </section>
   </article>
 </template>
@@ -74,16 +64,19 @@ export default {
   name: 'Puppies',
   computed: {
     ...mapGetters([
-      'puppies'
+      'puppies',
+      'parents'
     ])
   },
   methods: {
     ...mapActions([
-      'fetchPuppies'
+      'fetchPuppies',
+      'fetchParents'
     ])
   },
   created () {
     this.fetchPuppies()
+    this.fetchParents()
   },
   mounted () {
     document.title = 'Home | Labraschnoodles!'
@@ -115,7 +108,7 @@ export default {
 
   .article-header {
     font-size: 5pc;
-    @include viewportFontSize(6, 2pc, 5pc);
+    @include viewportFontSize(6, 32px, 80px);
     text-align: left;
     max-width: 24ch;
     padding: 0;
@@ -139,7 +132,8 @@ export default {
     padding: 4pc 0 0;
     margin: 6pc 0 4pc;
     font-family: 'essonnes-display', serif;
-    font-size: 3pc;
+    /*font-size: 3pc;*/
+    @include viewportFontSize(4.5, 16px, 48px);
     font-weight: 500;
     color: rgba(black, 0.8);
     line-height: 1.414;

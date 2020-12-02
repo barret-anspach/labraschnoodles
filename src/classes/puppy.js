@@ -14,13 +14,16 @@ export default class Puppy {
     }
     if (data.fields.accentColor) {
       const rgb = data.fields.accentColor.replace(/(^rgb\(|\)$)/g, '')
+      const rgbOpaque = rgb.split(',').map(v => Math.floor(parseInt(v) + (255 - parseInt(v)) * 0.25)).join(', ')
       if (rgb) {
         this.accentColor = 'rgba(' + rgb + ', 0.8)'
         this.contrastColor = fontColorContrast(rgb.split(','))
+        this.accentColorOpaque = 'rgb(' + rgbOpaque + ')'
       } else {
         // Assumed to be Hex
         this.accentColor = 'rgba(' + data.fields.accentColor + ', 0.8)'
         this.contrastColor = fontColorContrast(data.fields.accentColor)
+        this.accentColorOpaque = data.fields.accentColor
       }
     }
     if (data.fields.traits) this.traits = data.fields.traits

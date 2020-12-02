@@ -14,12 +14,12 @@ const getters = {
 const actions = {
   fetchPuppies ({ commit }) {
     if (state.puppies.length > 0) {
-      window.console.log('already have puppies:\n', state.puppies)
+      // Already have puppies
       commit(types.FETCH_PUPPIES_SUCCESS, { res: state.puppies })
     }
     puppyService.getPuppies()
       .then((res) => {
-        console.log('GOT PUPPIES', res)
+        // Got the puppies!
         commit(types.FETCH_PUPPIES_SUCCESS, { res })
       })
       .catch((error) => {
